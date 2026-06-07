@@ -1,6 +1,21 @@
 # Study AI Companion
 
-Aplikacja Flutter do nauki z pomocą AI, która pozwala studentowi wrzucać materiały dydaktyczne i „rozmawiać” z ich treścią.
+Aplikacja Flutter do nauki z pomocą AI, która pozwala studentowi wrzucać materiały dydaktyczne i „rozmawiać" z ich treścią.
+
+---
+
+## Zrzuty ekranu
+
+> Umieść screeny w folderze `screenshots/`
+
+| | | |
+|---|---|---|
+| ![](screenshots/splash.png) | ![](screenshots/subjects.png) | ![](screenshots/chat.png) |
+| `splash.png` | `subjects.png` | `chat.png` |
+| ![](screenshots/flashcards.png) | ![](screenshots/quiz.png) | ![](screenshots/exam_mode.png) |
+| `flashcards.png` | `quiz.png` | `exam_mode.png` |
+
+---
 
 ## Opis
 
@@ -15,6 +30,8 @@ Aplikacja wykorzystuje modele AI do:
 - tworzenia quizów,
 - prowadzenia trybu odpytywania.
 
+---
+
 ## Funkcje
 
 - Upload PDF.
@@ -24,14 +41,15 @@ Aplikacja wykorzystuje modele AI do:
 - Generowanie fiszek z materiałów.
 - Generowanie quizów.
 - Historia rozmów per przedmiot.
-- Tryb „odpytywania”, w którym AI zadaje pytania studentowi.
+- Tryb „odpytywania", w którym AI zadaje pytania studentowi.
 - Streamowane odpowiedzi w czasie rzeczywistym.
 - Integracja z Anthropic API i OpenAI API.
 
+---
+
 ## Technologie
 
-- Flutter
-- Dart
+- Flutter / Dart
 - `flutter_bloc`
 - Clean Architecture
 - OpenAI API
@@ -41,7 +59,7 @@ Aplikacja wykorzystuje modele AI do:
 - OCR / parsowanie zdjęć notatek
 - Local history storage
 
-`syncfusion_flutter_pdf` nadaje się do pracy z dokumentami PDF w Flutterze i wspiera odczyt oraz edycję plików PDF. [web:2][web:5]
+---
 
 ## Jak działa aplikacja
 
@@ -49,7 +67,9 @@ Aplikacja wykorzystuje modele AI do:
 2. Aplikacja parsuje treść i zapisuje ją jako bazę wiedzy dla danego przedmiotu.
 3. Użytkownik może rozmawiać z AI o materiałach.
 4. AI generuje fiszki, quizy albo tryb odpytywania.
-5. Odpowiedzi są streamowane do UI przez SSE, żeby użytkownik widział je na bieżąco. Streaming odpowiedzi AI przez SSE to standardowy sposób przesyłania tokenów z API do frontendu. 
+5. Odpowiedzi są streamowane do UI przez SSE, żeby użytkownik widział je na bieżąco.
+
+---
 
 ## Integracja z AI
 
@@ -57,18 +77,24 @@ Aplikacja wspiera dwa backendy AI:
 - **Anthropic API**
 - **OpenAI API**
 
-Warstwa data powinna być zbudowana tak, aby model dostawcy AI można było podmienić bez zmiany logiki domenowej.
+Warstwa data jest zbudowana tak, aby model dostawcy AI można było podmienić bez zmiany logiki domenowej.
+
+---
 
 ## Streamowanie odpowiedzi
 
 Odpowiedzi z modelu są wysyłane do UI w trybie stream, dzięki czemu użytkownik widzi generowanie odpowiedzi na żywo.
+
+---
 
 ## Stan aplikacji
 
 Do zarządzania stanem użyty jest `flutter_bloc`, co pozwala:
 - trzymać logikę UI poza widgetami,
 - łatwiej testować logikę,
-- skalować projekt wraz z kolejnymi feature’ami.  
+- skalować projekt wraz z kolejnymi feature'ami.
+
+---
 
 ## Roadmap
 
@@ -80,11 +106,9 @@ Do zarządzania stanem użyty jest `flutter_bloc`, co pozwala:
 - Eksport fiszek do Anki.
 - Wsparcie dla wielu języków.
 
+---
 
+## Autorzy
 
-
-## Autorzy 
-
-Yana Trotsenko
-
-Valeriia Khylchenko 
+Yana Trotsenko  
+Valeriia Khylchenko
