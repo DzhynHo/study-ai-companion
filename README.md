@@ -19,86 +19,117 @@ Aplikacja Flutter do nauki z pomocą AI, która pozwala studentowi wrzucać mate
 
 ## Opis
 
-**Study AI Companion** to aplikacja mobilna/webowa stworzona w Flutterze, która pomaga w nauce na podstawie własnych materiałów:
-- PDF-ów,
-- zdjęć notatek,
-- własnych plików źródłowych z zajęć.
+**Study AI Companion** to aplikacja mobilna/webowa stworzona w Flutterze, która pomaga w nauce na podstawie własnych materiałów — PDF-ów, zdjęć notatek i plików z zajęć.
 
-Aplikacja wykorzystuje modele AI do:
-- zadawania pytań o treść materiałów,
-- generowania fiszek,
-- tworzenia quizów,
-- prowadzenia trybu odpytywania.
+Aplikacja wykorzystuje modele AI do zadawania pytań o treść materiałów, generowania fiszek, tworzenia quizów i prowadzenia trybu odpytywania.
 
 ---
 
 ## Funkcje
 
-- Upload PDF.
-- Upload zdjęć notatek.
-- Chat z AI, które zna treść materiałów.
-- Uproszczony RAG na bazie załadowanych dokumentów.
-- Generowanie fiszek z materiałów.
-- Generowanie quizów.
-- Historia rozmów per przedmiot.
-- Tryb „odpytywania", w którym AI zadaje pytania studentowi.
-- Streamowane odpowiedzi w czasie rzeczywistym.
-- Integracja z Anthropic API i OpenAI API.
+| Funkcja | Opis |
+|---|---|
+| **Upload PDF** | Wgraj skrypt lub podręcznik — tekst wyodrębniany lokalnie (Syncfusion) |
+| **Upload zdjęcia notatek** | Zrób zdjęcie ręcznych notatek — AI odczyta tekst (OCR przez Groq Vision) |
+| **Chat z AI** | Zadawaj pytania do swoich materiałów — AI odpowiada wyłącznie na ich podstawie |
+| **Streaming odpowiedzi** | Tekst pojawia się słowo po słowie w czasie rzeczywistym (SSE) |
+| **Generowanie fiszek** | AI tworzy 8–10 par pytanie/odpowiedź z animacją obrotu karty |
+| **Generowanie quizów** | 5–6 pytań wielokrotnego wyboru (A/B/C/D) z oceną wyników |
+| **Tryb odpytywania** | AI wciela się w egzaminatora — zadaje pytania i ocenia odpowiedzi studenta |
+| **Historia rozmów** | Każdy przedmiot ma własną historię czatu zapisaną lokalnie |
+| **Tryb offline** | Dane przechowywane lokalnie w Hive (bez potrzeby konta/chmury) |
 
 ---
 
-## Technologie
+## Stack technologiczny
 
-- Flutter / Dart
-- `flutter_bloc`
-- Clean Architecture
-- OpenAI API
-- Anthropic API
-- SSE stream
-- `syncfusion_flutter_pdf`
-- OCR / parsowanie zdjęć notatek
-- Local history storage
-
----
-
-## Jak działa aplikacja
-
-1. Student dodaje PDF albo zdjęcie notatek.
-2. Aplikacja parsuje treść i zapisuje ją jako bazę wiedzy dla danego przedmiotu.
-3. Użytkownik może rozmawiać z AI o materiałach.
-4. AI generuje fiszki, quizy albo tryb odpytywania.
-5. Odpowiedzi są streamowane do UI przez SSE, żeby użytkownik widział je na bieżąco.
+| Warstwa | Technologia |
+|---|---|
+| Framework | Flutter 3.x / Dart 3.x |
+| Zarządzanie stanem | `flutter_bloc` 8.x |
+| AI — czat i generowanie | Groq API (model `llama-3.3-70b-versatile`) |
+| AI — OCR zdjęć | Groq Vision (`llama-4-scout-17b-16e-instruct`) |
+| Parsowanie PDF | `syncfusion_flutter_pdf` (lokalnie, bez uploadu) |
+| Baza danych | Hive (lokalny NoSQL) |
+| Streaming | SSE (Server-Sent Events) przez `dio` |
+| UI | Material Design 3 |
 
 ---
 
-## Integracja z AI
+## Architektura
 
-Aplikacja wspiera dwa backendy AI:
-- **Anthropic API**
-- **OpenAI API**
+Projekt oparty na **Clean Architecture** z podziałem na trzy warstwy:
 
-Warstwa data jest zbudowana tak, aby model dostawcy AI można było podmienić bez zmiany logiki domenowej.
+```
+presentation/          # UI — strony, BLoC (flutter_bloc)
+├── bloc/
+│   └── study_bloc.dart
+└── pages/
+    ├── splash_page.dart
+    ├── subjects_page.dart
+    ├── chat_page.dart
+    ├── flashcards_page.dart
+    ├── quiz_page.dart
+    └── exam_mode_page.dart
+
+domain/               # Logika biznesowa — encje, interfejsy
+├── entities/          # Subject, Message, Flashcard, QuizQuestion
+└── repositories/      # Abstrakcyjny interfejs StudyRepository
+
+data/                 # Implementacje — API, baza danych
+├── datasources/
+│   ├── groq_client.dart
+│   ├── anthropic_client.dart
+│   ├── local_data_source.dart
+│   └── text_extraction_service.dart
+└── repositories/
+    └── study_repository_impl.dart
+```
+
+**Przepływ danych:**
+```
+Strona → zdarzenie BLoC → Repository → Groq API / Hive → nowy Stan → UI
+```
 
 ---
 
-## Streamowanie odpowiedzi
+## Jak działa RAG (uproszczony)
 
-Odpowiedzi z modelu są wysyłane do UI w trybie stream, dzięki czemu użytkownik widzi generowanie odpowiedzi na żywo.
+Aplikacja nie używa wektorowej bazy danych. Przy każdym pytaniu do API wysyłany jest pełny tekst materiałów (do 24 000 znaków) wraz z pytaniem studenta:
+
+```
+MATERIAŁY:
+[wyodrębniony tekst z PDF/zdjęcia]
+
+PYTANIE:
+[pytanie studenta]
+```
+
+AI odpowiada wyłącznie na podstawie dostarczonych materiałów — jeśli odpowiedź nie jest w tekście, informuje o tym.
 
 ---
 
-## Stan aplikacji
+## Instalacja
 
-Do zarządzania stanem użyty jest `flutter_bloc`, co pozwala:
-- trzymać logikę UI poza widgetami,
-- łatwiej testować logikę,
-- skalować projekt wraz z kolejnymi feature'ami.
+```bash
+git clone <url-repo>
+cd first_app
+flutter pub get
+flutter run
+```
+
+Otwórz `lib/core/config.dart` i wstaw klucz API:
+
+```dart
+static const String groqApiKey = 'gsk_TWÓJ_KLUCZ_TUTAJ';
+```
+
+Klucz uzyskasz bezpłatnie na [console.groq.com](https://console.groq.com).
 
 ---
 
 ## Roadmap
 
-- OCR dla zdjęć notatek.
 - Synchronizacja danych w chmurze.
 - Tagowanie materiałów.
 - Wyszukiwanie pełnotekstowe po wszystkich notatkach.
@@ -112,3 +143,7 @@ Do zarządzania stanem użyty jest `flutter_bloc`, co pozwala:
 
 Yana Trotsenko  
 Valeriia Khylchenko
+
+---
+
+*Zbudowane z Flutter + Groq AI*
