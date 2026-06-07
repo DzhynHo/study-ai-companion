@@ -1,27 +1,12 @@
-# Study AI Companion
+# EduChat — Aplikacja do Nauki z Asystentem AI
 
-Aplikacja Flutter do nauki z pomocą AI, która pozwala studentowi wrzucać materiały dydaktyczne i „rozmawiać" z ich treścią.
+> Mobilna aplikacja Flutter, w której student wgrywa materiały (PDF, zdjęcia notatek) i może z nimi rozmawiać, generować fiszki, quizy oraz być odpytywany przez AI.
 
----
-
-## Zrzuty ekranu
-
-
-
-| | | |
-|---|---|---|
-| ![](screenshots/splash.png) | ![](screenshots/subjects.png) | ![](screenshots/chat.png) |
-| `splash.png` | `subjects.png` | `chat.png` |
-| ![](screenshots/flashcards.png) | ![](screenshots/quiz.png) | ![](screenshots/exam_mode.png) |
-| `flashcards.png` | `quiz.png` | `exam_mode.png` |
-
----
-
-## Opis
-
-**Study AI Companion** to aplikacja mobilna/webowa stworzona w Flutterze, która pomaga w nauce na podstawie własnych materiałów — PDF-ów, zdjęć notatek i plików z zajęć.
-
-Aplikacja wykorzystuje modele AI do zadawania pytań o treść materiałów, generowania fiszek, tworzenia quizów i prowadzenia trybu odpytywania.
+![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-3.x-blue?logo=dart)
+![BLoC](https://img.shields.io/badge/State-flutter__bloc-blueviolet)
+![AI](https://img.shields.io/badge/AI-Groq%20LLaMA%203.3-orange)
+![Status](https://img.shields.io/badge/Status-Gotowa-brightgreen)
 
 ---
 
@@ -52,6 +37,7 @@ Aplikacja wykorzystuje modele AI do zadawania pytań o treść materiałów, gen
 | Parsowanie PDF | `syncfusion_flutter_pdf` (lokalnie, bez uploadu) |
 | Baza danych | Hive (lokalny NoSQL) |
 | Streaming | SSE (Server-Sent Events) przez `dio` |
+| Fonty | Space Grotesk, Syne Mono (Google Fonts) |
 | UI | Material Design 3 |
 
 ---
@@ -63,7 +49,7 @@ Projekt oparty na **Clean Architecture** z podziałem na trzy warstwy:
 ```
 presentation/          # UI — strony, BLoC (flutter_bloc)
 ├── bloc/
-│   └── study_bloc.dart
+│   └── study_bloc.dart      # Główny BLoC z 19 zdarzeniami
 └── pages/
     ├── splash_page.dart
     ├── subjects_page.dart
@@ -78,10 +64,10 @@ domain/               # Logika biznesowa — encje, interfejsy
 
 data/                 # Implementacje — API, baza danych
 ├── datasources/
-│   ├── groq_client.dart
-│   ├── anthropic_client.dart
-│   ├── local_data_source.dart
-│   └── text_extraction_service.dart
+│   ├── groq_client.dart            # Groq AI (aktywny)
+│   ├── anthropic_client.dart       # Claude API (przygotowany)
+│   ├── local_data_source.dart      # Hive storage
+│   └── text_extraction_service.dart # PDF → tekst (Syncfusion)
 └── repositories/
     └── study_repository_impl.dart
 ```
@@ -93,9 +79,44 @@ Strona → zdarzenie BLoC → Repository → Groq API / Hive → nowy Stan → U
 
 ---
 
+## Instalacja
+
+### Wymagania
+
+- Flutter SDK 3.x
+- Dart 3.x
+- Konto Groq (darmowe): [console.groq.com](https://console.groq.com)
+
+### Kroki
+
+```bash
+# Klonuj repozytorium
+git clone <url-repo>
+cd first_app
+
+# Zainstaluj zależności
+flutter pub get
+
+# Wgraj klucz API (patrz niżej)
+# Uruchom aplikację
+flutter run
+```
+
+### Konfiguracja klucza API
+
+Otwórz `lib/core/config.dart` i wstaw swój klucz Groq:
+
+```dart
+static const String groqApiKey = 'gsk_TWÓJ_KLUCZ_TUTAJ';
+```
+
+Klucz API uzyskasz bezpłatnie na [console.groq.com](https://console.groq.com).
+
+---
+
 ## Jak działa RAG (uproszczony)
 
-Aplikacja nie używa wektorowej bazy danych. Przy każdym pytaniu do API wysyłany jest pełny tekst materiałów (do 24 000 znaków) wraz z pytaniem studenta:
+Aplikacja nie używa wektorowej bazy danych. Zamiast tego przy każdym pytaniu do API wysyłany jest pełny tekst materiałów (do 24 000 znaków) wraz z pytaniem studenta:
 
 ```
 MATERIAŁY:
@@ -109,40 +130,20 @@ AI odpowiada wyłącznie na podstawie dostarczonych materiałów — jeśli odpo
 
 ---
 
-## Instalacja
+## Zrzuty ekranu
 
-```bash
-git clone <url-repo>
-cd first_app
-flutter pub get
-flutter run
-```
-
-Otwórz `lib/core/config.dart` i wstaw klucz API:
-
-```dart
-static const String groqApiKey = 'gsk_TWÓJ_KLUCZ_TUTAJ';
-```
-
-Klucz uzyskasz bezpłatnie na [console.groq.com](https://console.groq.com).
+| | | |
+|---|---|---|
+| ![Splash](screenshots/splash.png) | ![Przedmioty](screenshots/subjects.png) | ![Chat](screenshots/chat.png) |
+| Ekran startowy | Lista przedmiotów | Chat z AI |
+| ![Fiszki](screenshots/flashcards.png) | ![Quiz](screenshots/quiz.png) | ![Odpytywanie](screenshots/exam_mode.png) |
+| Fiszki | Quiz | Tryb odpytywania |
 
 ---
 
-## Roadmap
+## Licencja
 
-- Synchronizacja danych w chmurze.
-- Tagowanie materiałów.
-- Wyszukiwanie pełnotekstowe po wszystkich notatkach.
-- Tryb powtórek z spaced repetition.
-- Eksport fiszek do Anki.
-- Wsparcie dla wielu języków.
-
----
-
-## Autorzy
-
-Yana Trotsenko  
-Valeriia Khylchenko
+MIT License — możesz swobodnie używać, modyfikować i dystrybuować.
 
 ---
 
