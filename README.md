@@ -6,7 +6,7 @@ Aplikacja Flutter do nauki z pomocą AI, która pozwala studentowi wrzucać mate
 
 ## Zrzuty ekranu
 
-> Umieść screeny w folderze `screenshots/`
+
 
 | | | |
 |---|---|---|
